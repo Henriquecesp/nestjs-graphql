@@ -14,6 +14,10 @@ export class User {
 
   @Column()
   email: string;
+
+  @Column({
+    transformer: hashPasswordTransform,
+  })
   @HideField()
   password: string;
 }
