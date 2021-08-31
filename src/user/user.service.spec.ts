@@ -16,7 +16,6 @@ describe('UserService', () => {
     find: jest.fn(),
     create: jest.fn(),
     save: jest.fn(),
-    update: jest.fn(),
     delete: jest.fn(),
   };
 
@@ -104,25 +103,18 @@ describe('UserService', () => {
   describe('When Update User', () => {
     it('should update a user', async () => {
       const user = TestUtil.giveMeAValidUser();
-      const updatedUser = { ...user, name: 'new name' };
+      const updatedMockUser = {
+        ...user,
+        name: 'Updated Name',
+      };
       mockRepository.findOne.mockReturnValue(user);
-      mockRepository.update.mockReturnValue({
-        ...user,
-        ...updatedUser,
-      });
-      mockRepository.create.mockReturnValue({
-        ...user,
-        ...updatedUser,
-      });
+      mockRepository.save.mockReturnValue(updatedMockUser);
 
-      const resultUser = await service.updateUser(user.id, {
-        ...user,
-        ...updatedUser,
-      });
-      expect(resultUser).toMatchObject(updatedUser);
-      expect(mockRepository.create).toHaveBeenCalledTimes(1);
-      expect(mockRepository.findOne).toHaveBeenCalledTimes(1);
-      expect(mockRepository.update).toHaveBeenCalledTimes(1);
+      const updatedUser = await service.updateUser(user.id, updatedMockUser);
+
+      expect(mockRepository.findOne).toHaveBeenCalledWith(user.id);
+      expect(mockRepository.save).toHaveBeenCalledWith(updatedMockUser);
+      expect(updatedUser).toMatchObject(updatedMockUser);
     });
   });
 
