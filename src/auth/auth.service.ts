@@ -22,7 +22,7 @@ export class AuthService {
       throw new UnauthorizedException('Incorrect Password');
     }
 
-export class AuthService {}
+    const token = await this.jwtToken(user);
 
     return {
       user,
@@ -30,4 +30,11 @@ export class AuthService {}
     };
   }
 
+  private async jwtToken(user: User): Promise<string> {
+    const payload = {
+      username: user.name,
+      sub: user.id,
+    };
+    return this.jwtService.signAsync(payload);
+  }
 }
