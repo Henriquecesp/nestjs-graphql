@@ -21,6 +21,14 @@ export class UserService {
     return users;
   }
 
+  async findOneByEmail(email: string): Promise<User> {
+    const user = await this.userRepository.findOne({ where: { email } });
+    if (!user) {
+      throw new NotFoundException(`User with email: ${email} not found`);
+    }
+    return user;
+  }
+
   async findOneById(id: string): Promise<User> {
     const user = await this.userRepository.findOne(id);
     if (!user) {
@@ -42,9 +50,7 @@ export class UserService {
 
   async updateUser(id: string, data: UpdateUserInput): Promise<User> {
     const user = await this.findOneById(id);
-    await this.userRepository.update(user, { ...data });
-    const userUpdate = this.userRepository.create({ ...user, ...data });
-    return userUpdate;
+    return await this.userRepository.save({ ...user, ...data });
   }
 
   async deleteUser(id: string): Promise<boolean> {
